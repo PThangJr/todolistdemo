@@ -11,9 +11,11 @@ class App extends Component {
     this.state = {
       data: null,
       statusEditTask: false,
+      id: null,
       fieldName: "",
       fieldStatus: "notComplete",
-      statusUpdateTask: false
+      statusUpdateTask: false,
+      valueAdd: null
     }
 
   }
@@ -30,14 +32,26 @@ class App extends Component {
   
   displayEditTask = () => {
     // status: true
+    
     const {statusEditTask, statusUpdateTask} = this.state;
-    this.setState({
-      statusEditTask: true,
-      statusUpdateTask: false
-    });
+    if(statusUpdateTask) {
+      this.setState({
+        statusEditTask: true,
+        statusUpdateTask: false,
+        fieldName:"",
+        fieldStatus: "notComplete"
+      });
+    }
+    else {
+      this.setState({
+        statusEditTask: true,
+        statusUpdateTask: false
+      })
+    }
   }
   
   onHandleChange = (e) => {
+    const {statusUpdateTask} = this.state;
     const target = e.target;
     const name = target.name;
     const value = target.value;
@@ -45,6 +59,8 @@ class App extends Component {
     this.setState({
       [name]: value
     })
+    // console.log(this.state);
+    // this.setState({statusUpdateTask: false});
   }
    generateId = () => {
     return '_' + Math.random().toString(36).substr(2, 9);
@@ -78,16 +94,66 @@ class App extends Component {
           data.push(result)
           this.setState({data: data})
         })
-        .catch(error => error)
+        .then(() => {
+          this.setState({
+            fieldName:"",
+            fieldStatus: "notComplete"
+          })
 
+        })
+        .catch(error => error)
     }
   }
   onUpdate = (e) => {
-    e.preventDefault();
-    console.log(e)
+    
+    const {data, valueAdd, id, fieldName, fieldStatus} = this.state;
+    if(fieldName) {
+      const value = {
+        name: fieldName,
+        status: fieldStatus
+      }
+    
+      const newUpdateData = data.map((item, index) => {
+        if(item.id === id) {
+          item.name = fieldName;
+          item.status = fieldStatus;
+        }
+        return item;
+      })
+      this.setState({
+        data: newUpdateData
+      })
+      
+      e.preventDefault();
+      console.log(valueAdd)
+      const options = {
+        method: "PUT",
+        headers: {
+          'Content-Type': 'application/json'
+          // 'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: JSON.stringify(value)
+      }
+      fetch(linkAPI + "/" + id, options)
+        .then(response => response.json())
+        .then(result => {
+          console.log(result)
+        })
+        .catch(error => alert("Update tên công việc không thành công!!!"))
+    }
+    else {
+      alert("Vui lòng nhập công việc!!")
+    }
+    
   }
   onReset = (e) => {
+    // const {fieldName, fieldStatus} = this.state;
+
     e.preventDefault();
+    this.setState({
+      fieldName: "",
+      fieldStatus: ""
+    })
   }
  onDelete = (id) => {
   // console.log(id);
@@ -155,18 +221,21 @@ class App extends Component {
     const dataFilter = data.filter((item, index) => {
       return item.id === id
     })
-    this.displayEditTask();
+    this.showEditTask();
     this.setState({
-      // fieldName: dataFilter[0].name,
-      // fieldStatus: dataFilter[0].status,
-      statusUpdateTask: true
+      fieldName: dataFilter[0].name,
+      fieldStatus: dataFilter[0].status,
+      statusUpdateTask: true,
+      valueAdd: dataFilter[0],
+      id: id
     })
-    console.log(dataFilter)
-    console.log(this.state)
+    // console.log(dataFilter)
+    // console.log(this.state)
   }
   showEditTask = () => {
     const {statusUpdateTask} = this.state;
     this.setState({
+      statusEditTask: true,
       statusUpdateTask: false
     })
   }
@@ -194,9 +263,7 @@ class App extends Component {
   <div className="container">
     <div className="text-center">
       <h1>Quản Lý Công Việc</h1>
-      <button
-        onClick={() => this.onGenerateData()}
-      >Generate Data</button>
+      
       <hr />
     </div>
     <div className="row">
@@ -204,7 +271,6 @@ class App extends Component {
         <EditTask 
           statusEditTask={statusEditTask}
           onHandleChange={(e) => this.onHandleChange(e)}
-          checkStatus={fieldStatus}
           fieldName={fieldName}
           fieldStatus={fieldStatus}
           onAdd={(e) => this.onAdd(e)}

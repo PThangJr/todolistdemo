@@ -3,16 +3,25 @@ import React, { Component } from 'react';
 class EditTask extends Component {
   constructor(props) {
     super(props);
-
     this.state = {
-      fieldName:'',
-      fieldStatus: ''
+      fieldName: '',
+      fieldStatus: null
     }
+    
   }
+  
+  componentWillMount() {
+    const {statusEditTask,fieldName, fieldStatus, statusUpdateTask, onHandleChange, onAdd, onUpdate,  onReset, hideEditTask} = this.props;
+    
+  }
+  
   checkDisplayEditTask = () => {
-    const {statusEditTask, statusUpdateTask, onHandleChange, onAdd, onUpdate, checkStatus, onReset, hideEditTask} = this.props;
+    const {statusEditTask,fieldName, fieldStatus, statusUpdateTask, onHandleChange, onAdd, onUpdate,  onReset, hideEditTask} = this.props;
     // console.log(checkStatus)
-
+    // console.log(fieldName);
+    // console.log(fieldStatus);
+    
+    
     if (statusEditTask) {
       
       return (
@@ -42,7 +51,10 @@ class EditTask extends Component {
           type="text" 
           className="form-control"
           name="fieldName"
-          onChange={(e) => onHandleChange(e)}
+          value={fieldName}
+          onChange={(e) => onHandleChange(e)
+          
+          }
           />
       </div>
      
@@ -55,8 +67,8 @@ class EditTask extends Component {
           value="notComplete"
           type="radio" 
           aria-label="Text for screen reader"
-          onChange={(e) => onHandleChange(e)} 
-          checked={checkStatus === "notComplete"}
+          onChange={(e) => onHandleChange(e)}
+          checked={statusUpdateTask ? !fieldStatus : fieldStatus === "notComplete"}
           />
           <span>
             Chưa hoàn thành
@@ -70,7 +82,7 @@ class EditTask extends Component {
           type="radio" 
           aria-label="Text for screen reader"
           onChange={(e) => onHandleChange(e)} 
-          checked={checkStatus === "complete"}
+          checked={statusUpdateTask ? fieldStatus : fieldStatus === "complete"}
           
           />
           <span>
@@ -88,7 +100,7 @@ class EditTask extends Component {
             >Thêm</button>
             ) : (<button 
               type="submit" 
-              className="btn btn-warning"
+              className="btn  btn-info"
               onClick={(e) => onUpdate(e)}
               >Sửa</button>)
         }
