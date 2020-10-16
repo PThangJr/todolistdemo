@@ -1,0 +1,36 @@
+.form-check {
+    display: flex;
+    justify-content: space-around;
+    align-items: center;
+}
+
+.label-success {
+    background-color: #5cb85c;
+}
+
+
+.label-danger {
+    background-color: #d9534f;
+}
+.label {
+    display: inline;
+    padding: 10px 10px;
+    font-size: 75%;
+    font-weight: 700;
+    line-height: 1;
+    color: #fff;
+    text-align: center;
+    white-space: nowrap;
+    vertical-align: baseline;
+    border-radius: .25em;
+    cursor: pointer;
+}
+.flex {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+}
+.fa-times-circle {
+    cursor: pointer;
+    font-size: 20px;
+}
