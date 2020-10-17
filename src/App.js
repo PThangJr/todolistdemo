@@ -9,13 +9,31 @@ class App extends Component {
   constructor(props) {
     super(props);
     this.state = {
+      dataInit: null,
       data: null,
       statusEditTask: false,
       id: null,
       fieldName: "",
       fieldStatus: "notComplete",
       statusUpdateTask: false,
-      valueAdd: null
+      valueAdd: null,
+      filterValue: {
+        name: "",
+        status: -1
+      },
+      sort: {
+        sortBy: "",
+        sttSort: {
+          status: -1
+        },
+        nameSort: {
+          status: -1
+        },
+        statusSort: {
+          status: -1
+        },
+      },
+
     }
 
   }
@@ -23,7 +41,12 @@ class App extends Component {
     fetch(linkAPI)
       .then(response => response.json())
       .then(data => {
-        this.setState({data})
+        
+        
+        this.setState({
+          data: data,
+          dataInit: data
+        })
       })
        
   }
@@ -90,7 +113,6 @@ class App extends Component {
       fetch(linkAPI, options)
         .then(response => response.json())
         .then(result => {
-          console.log(result.id)
           data.push(result)
           this.setState({data: data})
         })
@@ -247,14 +269,117 @@ class App extends Component {
       statusEditTask: false
     })
   }
+  filterItem = (fieldName, fieldStatus) => {
+    const {data} = this.state;
+    
+    this.setState({
+      filterValue: {
+        name: fieldName,
+        status: parseInt(fieldStatus)
+      }
+    })
+    
+  }
+  onHandleSort = (e, nameSort, statusSort) => {
+    let {sort} = this.state;
+      
+      this.setState({
+        sort: {
+          ...sort,
+          [nameSort] : {
+            status: sort[nameSort].status < 1 ? sort[nameSort].status + 1: -1
+          },
+          sortBy: nameSort
+        }
+
+      })
+     
+      
+  }
+
+    
 
   render() {
-    const {data, statusEditTask, fieldName, fieldStatus, statusUpdateTask} = this.state;
-    // console.log(data);
+    let {data,dataInit, statusEditTask, fieldName, fieldStatus, statusUpdateTask , statusSort, nameSort, filterValue, sort} = this.state;
     // console.log(statusEditTask)
     // console.log(fieldName);
     // console.log(fieldStatus);
+    // console.log(typeof filterValue.status);
     // console.log(this.generateId())
+    // console.log(sort);
+    
+    if(data) {
+    // console.log(data);
+
+      if(filterValue) {
+        
+        if(filterValue.name) {
+          data = data.filter((item) => {
+           return item.name.toUpperCase().indexOf(filterValue.name.toUpperCase().trim()) !== -1;
+         })
+      }
+      // console.log(filterValue);
+      
+        data = data.filter(item => {
+          if(filterValue.status === -1) {
+            return item;
+          }
+           else {
+             return item.status === (filterValue.status === 0 ? true: false);
+
+           }     
+          
+        })
+        // console.log(dataFilter);
+        // console.log(data);
+        if (sort) {
+         console.log(filterValue);
+         
+         if (sort.sortBy === "") {
+           data = dataInit
+         }
+         else if (sort.sortBy === "nameSort" ){
+           // data = dataInit
+           if(sort["nameSort"].status === -1) {
+             data = dataInit
+           }
+           else if(sort["nameSort"].status === 0) {
+             
+             data = data.sort((a, b) =>{
+               if(a.name.toUpperCase() < b.name.toUpperCase()) return -1             
+             })
+           }
+           else if(sort["nameSort"].status === 1) {
+             
+             data = data.sort((a, b) =>{
+               if(a.name.toUpperCase() > b.name.toUpperCase()) return -1
+             })
+           }
+         }
+          else if (sort.sortBy === "statusSort" ) {
+           if(sort["statusSort"].status === -1) {
+             data = dataInit
+           }
+           else if(sort["statusSort"].status === 0) {
+             
+             data = data.sort((a, b) =>{
+               if(a.status || b.status) return -1             
+             })
+           }
+           else if(sort["statusSort"].status === 1) {
+             
+             data = data.sort((a, b) =>{
+               if(a.status && b.status) return -1
+             })
+           }
+          }
+       }
+      }        
+    }
+      
+    
+
+    
     
 
 
@@ -294,6 +419,9 @@ class App extends Component {
               onDelete={(id) => this.onDelete(id)}
               onChangeStatus={(id) => this.onChangeStatus(id)}
               showUpdateTask={(id) => this.showUpdateTask(id)}
+              filterItem={(fieldName, fieldStatus) => this.filterItem(fieldName, fieldStatus)}
+              onHandleSort={(e, nameSort, statusSort) => this.onHandleSort(e, nameSort, statusSort)}
+              sort={sort}
             />
           </div>
         </div>
@@ -304,5 +432,6 @@ class App extends Component {
     );
   }
 }
+
 
 export default App;

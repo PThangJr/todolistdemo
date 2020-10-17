@@ -43,3 +43,12 @@
 .btn-info {
     margin-right: 10px;
 }
+.sort-box {
+    padding: 3px;
+    margin-left: 5px;
+}
+
+.table-header {
+    cursor: pointer;
+   
+}
