@@ -282,7 +282,16 @@ class App extends Component {
   }
   onHandleSort = (e, nameSort, statusSort) => {
     let {sort} = this.state;
-      
+      // if (sort.)
+      // console.log(sort.nameSort.status);
+    // let newSort = {...sort};
+    // console.log(newSort);
+    // newSort = {
+    //   [nameSort]: {
+    //     status: newSort[nameSort].status + 1
+    //   }
+    // }
+      // console.log(newSort);
       this.setState({
         sort: {
           ...sort,
@@ -293,7 +302,18 @@ class App extends Component {
         }
 
       })
-     
+      // if (sort[nameSort].status === 1) {
+      //   this.setState({
+      //     sort: {
+      //       ...sort,
+      //       [nameSort] : {
+      //         status: -1
+      //       }
+      //     }
+      //   })
+      // }
+      
+      // console.log(sort);
       
   }
 
@@ -310,7 +330,7 @@ class App extends Component {
     
     if(data) {
     // console.log(data);
-
+    var filterValueFunc = () => {
       if(filterValue) {
         
         if(filterValue.name) {
@@ -332,49 +352,53 @@ class App extends Component {
         })
         // console.log(dataFilter);
         // console.log(data);
-        if (sort) {
-         console.log(filterValue);
+      }    
+    }
+    filterValueFunc();
+          
+      
+       if (sort) {
          
          if (sort.sortBy === "") {
            data = dataInit
-         }
-         else if (sort.sortBy === "nameSort" ){
-           // data = dataInit
-           if(sort["nameSort"].status === -1) {
-             data = dataInit
-           }
-           else if(sort["nameSort"].status === 0) {
-             
-             data = data.sort((a, b) =>{
-               if(a.name.toUpperCase() < b.name.toUpperCase()) return -1             
-             })
-           }
-           else if(sort["nameSort"].status === 1) {
-             
-             data = data.sort((a, b) =>{
-               if(a.name.toUpperCase() > b.name.toUpperCase()) return -1
-             })
-           }
-         }
-          else if (sort.sortBy === "statusSort" ) {
-           if(sort["statusSort"].status === -1) {
-             data = dataInit
-           }
-           else if(sort["statusSort"].status === 0) {
-             
-             data = data.sort((a, b) =>{
-               if(a.status || b.status) return -1             
-             })
-           }
-           else if(sort["statusSort"].status === 1) {
-             
-             data = data.sort((a, b) =>{
-               if(a.status && b.status) return -1
-             })
-           }
+           filterValueFunc();
+        }
+        else if (sort.sortBy === "nameSort" ){
+          // data = dataInit
+          if(sort["nameSort"].status === -1) {
+            data = dataInit
           }
-       }
-      }        
+          else if(sort["nameSort"].status === 0) {
+            
+            data = data.sort((a, b) =>{
+              if(a.name.toUpperCase() < b.name.toUpperCase()) return -1             
+            })
+          }
+          else if(sort["nameSort"].status === 1) {
+            
+            data = data.sort((a, b) =>{
+              if(a.name.toUpperCase() > b.name.toUpperCase()) return -1
+            })
+          }
+        }
+         else if (sort.sortBy === "statusSort" ) {
+          if(sort["statusSort"].status === -1) {
+            data = dataInit
+          }
+          else if(sort["statusSort"].status === 0) {
+            
+            data = data.sort((a, b) =>{
+              if(a.status || b.status) return -1             
+            })
+          }
+          else if(sort["statusSort"].status === 1) {
+            
+            data = data.sort((a, b) =>{
+              if(a.status && b.status) return -1
+            })
+          }
+         }
+      }
     }
       
     
