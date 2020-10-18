@@ -32,7 +32,7 @@ class App extends Component {
         statusSort: {
           status: -1
         },
-      },
+      }
 
     }
 
@@ -81,6 +81,7 @@ class App extends Component {
     // console.log(e.target.name);
     this.setState({
       [name]: value
+  
     })
     // console.log(this.state);
     // this.setState({statusUpdateTask: false});
@@ -270,18 +271,22 @@ class App extends Component {
     })
   }
   filterItem = (fieldName, fieldStatus) => {
-    const {data} = this.state;
+    const {filterValue, sort} = this.state;
+
+      this.setState({
+        filterValue: {
+          name: fieldName,
+          status: parseInt(fieldStatus)
+        }
+      })
+
     
-    this.setState({
-      filterValue: {
-        name: fieldName,
-        status: parseInt(fieldStatus)
-      }
-    })
+
     
   }
   onHandleSort = (e, nameSort, statusSort) => {
-    let {sort} = this.state;
+    let {sort, filterValue} = this.state;
+    const {name, status} = filterValue;
       // if (sort.)
       // console.log(sort.nameSort.status);
     // let newSort = {...sort};
@@ -299,8 +304,8 @@ class App extends Component {
             status: sort[nameSort].status < 1 ? sort[nameSort].status + 1: -1
           },
           sortBy: nameSort
-        }
-
+          
+          }
       })
       // if (sort[nameSort].status === 1) {
       //   this.setState({
@@ -317,7 +322,6 @@ class App extends Component {
       
   }
 
-    
 
   render() {
     let {data,dataInit, statusEditTask, fieldName, fieldStatus, statusUpdateTask , statusSort, nameSort, filterValue, sort} = this.state;
@@ -329,15 +333,20 @@ class App extends Component {
     // console.log(sort);
     
     if(data) {
+      // console.log(this.state);
+      
     // console.log(data);
     var filterValueFunc = () => {
       if(filterValue) {
         
         if(filterValue.name) {
+         
           data = data.filter((item) => {
            return item.name.toUpperCase().indexOf(filterValue.name.toUpperCase().trim()) !== -1;
          })
       }
+      // console.log(data);
+      
       // console.log(filterValue);
       
         data = data.filter(item => {
@@ -352,23 +361,22 @@ class App extends Component {
         })
         // console.log(dataFilter);
         // console.log(data);
+        return data
       }    
     }
     filterValueFunc();
           
       
        if (sort) {
+    filterValueFunc();
          
-         if (sort.sortBy === "") {
-           data = dataInit
-           filterValueFunc();
-        }
-        else if (sort.sortBy === "nameSort" ){
+         if (sort.sortBy === "nameSort" ){
           // data = dataInit
-          if(sort["nameSort"].status === -1) {
-            data = dataInit
-          }
-          else if(sort["nameSort"].status === 0) {
+          // if(sort["nameSort"].status === -1) {
+          //   data = dataInit;
+            
+          // }
+           if(sort["nameSort"].status === 0) {
             
             data = data.sort((a, b) =>{
               if(a.name.toUpperCase() < b.name.toUpperCase()) return -1             
@@ -383,18 +391,19 @@ class App extends Component {
         }
          else if (sort.sortBy === "statusSort" ) {
           if(sort["statusSort"].status === -1) {
-            data = dataInit
+            
           }
-          else if(sort["statusSort"].status === 0) {
+           if(sort["statusSort"].status === 0) {
             
             data = data.sort((a, b) =>{
-              if(a.status || b.status) return -1             
+              return (a.status === b.status) ? 0 : a.status ? -1 : 1;          
             })
           }
           else if(sort["statusSort"].status === 1) {
+            console.log(data);
             
             data = data.sort((a, b) =>{
-              if(a.status && b.status) return -1
+              return (a.status === b.status) ? 0 : a.status ? 1 : -1;          
             })
           }
          }

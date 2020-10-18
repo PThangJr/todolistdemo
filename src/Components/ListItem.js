@@ -12,7 +12,8 @@ class ListItem extends Component {
       const {listItem, stt, onDelete, onChangeStatus, showUpdateTask} = this.props;
       const {name, status, id} = listItem;
         return (
-            <tr>
+            <tr 
+            className={!status ? "list-item" : "list-item complete"}>
                   <td>
                     {
                       stt
