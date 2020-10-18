@@ -38,6 +38,8 @@ class App extends Component {
 
   }
   componentWillMount() {
+    console.log("Loading data....");
+    
     fetch(linkAPI)
       .then(response => response.json())
       .then(data => {
